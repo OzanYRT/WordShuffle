@@ -17,6 +17,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
+import com.bcit.wordgame.ui.main.DirectionButton
+import com.bcit.wordgame.ui.main.LetterBox
 import kotlin.random.Random
 
 class MainActivity : ComponentActivity() {
@@ -28,19 +30,18 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-fun randomNumbers(): MutableList<String> {
+fun randomLetters(): MutableList<String> {
     val letters = mutableListOf("B", "C", "D", "F", "G", "H", "J", "K", "L", "M", "N", "P", "Q", "R", "S", "T", "V", "W", "X", "Y", "Z")
     val vowels = mutableListOf("A", "E", "I", "O", "U")
     val selectedLetters = mutableListOf<String>()
 
-    repeat(6) {
+    repeat(16) {
         val randomIndex = Random.nextInt(letters.size)
         selectedLetters.add(letters[randomIndex])
     }
-    repeat(3) {
+    repeat(9) {
         val randomIndex = Random.nextInt(vowels.size)
         selectedLetters.add(vowels[randomIndex])
-        vowels.removeAt(randomIndex)
     }
     selectedLetters.shuffle()
 
@@ -50,8 +51,8 @@ fun randomNumbers(): MutableList<String> {
 
 @Composable
 fun WordGrid() {
-    val gridSize = 3 // 3x3 grid
-    val letters = remember { mutableStateOf(randomNumbers()) }
+    val gridSize = 5 // 5x5 grid
+    val letters = remember { mutableStateOf(randomLetters()) }
     var selectedLetters = remember { mutableStateListOf<Int>(0) }
     var currentWord by remember { mutableStateOf("${letters.value[0]}") }
     var currentIndex by remember { mutableStateOf(0) } // Start from top left corner
@@ -71,7 +72,6 @@ fun WordGrid() {
             }
         }
     }
-
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
@@ -137,42 +137,14 @@ fun WordGrid() {
                 Text("Clear")
             }
             Button(onClick = {
-                letters.value = randomNumbers()
+                letters.value = randomLetters()
                 selectedLetters.clear()
-                currentWord = ""
+                selectedLetters.add(0)
+                currentWord = "${letters.value[0]}"
                 currentIndex = 0
             }) {
                 Text("Shuffle")
             }
         }
     }
-}
-
-@Composable
-fun DirectionButton(direction: String, onClick: () -> Unit) {
-    Button(
-        onClick = onClick,
-        modifier = Modifier.padding(4.dp)
-    ) {
-        Text(direction)
-    }
-}
-
-@Composable
-fun LetterBox(letter: String, isHighlighted: Boolean) {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .padding(2.dp)
-            .size(50.dp)
-            .background(if (isHighlighted) Color.Gray else Color.LightGray)
-    ) {
-        Text(text = letter, fontSize = 18.sp)
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    WordGrid()
 }
