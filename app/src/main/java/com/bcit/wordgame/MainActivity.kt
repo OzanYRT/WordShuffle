@@ -1,30 +1,22 @@
 package com.bcit.wordgame
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.unit.sp
-import com.bcit.wordgame.ui.theme.WordGameTheme
 import kotlin.random.Random
 
 class MainActivity : ComponentActivity() {
@@ -60,9 +52,26 @@ fun randomNumbers(): MutableList<String> {
 fun WordGrid() {
     val gridSize = 3 // 3x3 grid
     val letters = remember { mutableStateOf(randomNumbers()) }
-    var selectedLetters = remember { mutableStateListOf<Int>() }
-    var currentWord by remember { mutableStateOf("") }
+    var selectedLetters = remember { mutableStateListOf<Int>(0) }
+    var currentWord by remember { mutableStateOf("${letters.value[0]}") }
     var currentIndex by remember { mutableStateOf(0) } // Start from top left corner
+
+    fun updateSelection(newIndex: Int) {
+        // Add the letter if it's a new selection
+        if (!selectedLetters.contains(newIndex)) {
+            selectedLetters.add(newIndex)
+            currentIndex = newIndex
+            currentWord += letters.value[newIndex]
+        } else {
+            // Remove the letter if backtracking to the last selected cell
+            if (selectedLetters.last() == newIndex && selectedLetters.size > 1) {
+                selectedLetters.removeAt(selectedLetters.lastIndex)
+                currentWord = selectedLetters.joinToString("") { letters.value[it] }
+                currentIndex = selectedLetters.last()
+            }
+        }
+    }
+
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
@@ -86,20 +95,28 @@ fun WordGrid() {
         // Directional Buttons
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             DirectionButton("Up") {
-                currentIndex = (currentIndex - gridSize).coerceAtLeast(0)
+                if (currentIndex >= gridSize) {
+                    updateSelection(currentIndex - gridSize)
+                }
             }
 
             Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
                 DirectionButton("Left") {
-                    if (currentIndex % gridSize > 0) currentIndex--
+                    if (currentIndex % gridSize > 0) {
+                        updateSelection(currentIndex - 1)
+                    }
                 }
                 DirectionButton("Right") {
-                    if (currentIndex % gridSize < gridSize - 1) currentIndex++
+                    if (currentIndex % gridSize < gridSize - 1) {
+                        updateSelection(currentIndex + 1)
+                    }
                 }
             }
 
             DirectionButton("Down") {
-                currentIndex = (currentIndex + gridSize).coerceAtMost(letters.value.size - 1)
+                if (currentIndex < letters.value.size - gridSize) {
+                    updateSelection(currentIndex + gridSize)
+                }
             }
         }
 
@@ -113,7 +130,9 @@ fun WordGrid() {
             }
             Button(onClick = {
                 selectedLetters.clear()
-                currentWord = ""
+                selectedLetters.add(0)
+                currentWord = "${letters.value[0]}"
+                currentIndex = 0
             }) {
                 Text("Clear")
             }
