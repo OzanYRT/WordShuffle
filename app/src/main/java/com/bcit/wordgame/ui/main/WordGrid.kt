@@ -123,7 +123,7 @@ fun WordGrid(dictionary: Dictionary) {
             Button(onClick = {
                 val validWord = dictionary.checkWord(currentWord)
                 if(validWord) {
-                    points.value += 20
+                    points.value += currentWord.length * 5
                 }
                 // Check if the word is a valid word
             }) {
