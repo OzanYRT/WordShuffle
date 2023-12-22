@@ -25,6 +25,25 @@ class Dictionary(private val context: Context) {
         return false
     }
 
+    fun isPrefix(prefix: String): Boolean {
+        var left = 0
+        var right = dictionary.size - 1
+        val searchPrefix = prefix.lowercase()
+
+        while (left <= right) {
+            val mid = (left + right) / 2
+            val midVal = dictionary[mid]
+
+            when {
+                midVal.startsWith(searchPrefix) -> return true
+                midVal < searchPrefix -> left = mid + 1
+                else -> right = mid - 1
+            }
+        }
+
+        return false
+    }
+
     fun graphifyAndFindWords(letters: List<String>, gridSize: Int): Set<String> {
         val dx = listOf(-1, -1, -1, 0, 1, 1, 1, 0)
         val dy = listOf(-1, 0, 1, 1, 1, 0, -1, -1)
@@ -35,7 +54,8 @@ class Dictionary(private val context: Context) {
         }
 
         fun dfs(x: Int, y: Int, visited: Array<BooleanArray>, currentWord: String) {
-            if (currentWord.length > 10) return
+            if (!isPrefix(currentWord)) return
+            if (currentWord.length > 20) return
             if(!isValidCoordinate(x, y, gridSize) || visited[x][y]) {
                 return
             }
@@ -59,6 +79,5 @@ class Dictionary(private val context: Context) {
 
         return validWords
     }
-
 
 }

@@ -29,7 +29,6 @@ class MainActivity : ComponentActivity() {
         setContent {
 
             val dictionary = Dictionary(this)
-            println(dictionary.dictionary[0])
 
             WordGrid(dictionary)
         }
