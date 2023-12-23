@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -66,13 +67,11 @@ fun WordGrid(dictionary: Dictionary) {
 
 
     fun updateSelection(newIndex: Int) {
-        // Add the letter if it's a new selection
         if (!selectedLetters.contains(newIndex)) {
             selectedLetters.add(newIndex)
             currentIndex = newIndex
             currentWord += letters.value[newIndex]
         } else {
-            // Remove the letter if backtracking to the last selected cell
             if (selectedLetters.last() == newIndex && selectedLetters.size > 1) {
                 selectedLetters.removeAt(selectedLetters.lastIndex)
                 currentWord = selectedLetters.joinToString("") { letters.value[it] }
@@ -88,7 +87,7 @@ fun WordGrid(dictionary: Dictionary) {
             modifier = Modifier.padding(top = 20.dp)
         )
         Text(
-            text = "${points.value}",
+            text = "Points: ${points.value}",
             fontSize = 24.sp,
             modifier = Modifier.padding(top = 20.dp)
         )
@@ -110,33 +109,12 @@ fun WordGrid(dictionary: Dictionary) {
             }
         }
 
-        // Directional Buttons
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            DirectionButton("Up") {
-                if (currentIndex >= gridSize) {
-                    updateSelection(currentIndex - gridSize)
-                }
-            }
-
-            Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
-                DirectionButton("Left") {
-                    if (currentIndex % gridSize > 0) {
-                        updateSelection(currentIndex - 1)
-                    }
-                }
-                DirectionButton("Right") {
-                    if (currentIndex % gridSize < gridSize - 1) {
-                        updateSelection(currentIndex + 1)
-                    }
-                }
-            }
-
-            DirectionButton("Down") {
-                if (currentIndex < letters.value.size - gridSize) {
-                    updateSelection(currentIndex + gridSize)
-                }
-            }
-        }
+        DirectionGrid(
+            currentIndex = currentIndex,
+            gridSize = gridSize,
+            lettersSize = letters.value.size,
+            updateSelection = ::updateSelection
+        )
 
         // OK and Clear Buttons
         Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
@@ -144,6 +122,8 @@ fun WordGrid(dictionary: Dictionary) {
                 val validWord = dictionary.checkWord(currentWord)
                 if(validWord) {
                     points.value += currentWord.length * 5
+                } else {
+                    points.value -= 5
                 }
             }) {
                 Text("Check Word")
