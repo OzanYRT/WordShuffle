@@ -21,6 +21,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.bcit.wordgame.dictionary.Dictionary
 import com.bcit.wordgame.ui.main.DirectionButton
 import com.bcit.wordgame.ui.main.LetterBox
+import com.bcit.wordgame.ui.main.MainContent
 import com.bcit.wordgame.ui.main.WordGrid
 import kotlin.random.Random
 
@@ -32,7 +33,7 @@ class MainActivity : ComponentActivity() {
             val dictionary = Dictionary(this)
             val viewModel = ViewModelProvider(this)[WordGameViewModel::class.java]
 
-            WordGrid(dictionary, viewModel)
+            MainContent(dictionary, viewModel)
         }
     }
 }

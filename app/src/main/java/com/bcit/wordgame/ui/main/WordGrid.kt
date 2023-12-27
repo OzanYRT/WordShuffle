@@ -14,7 +14,8 @@ import kotlinx.coroutines.withContext
 fun WordGrid(dictionary: Dictionary, viewModel: WordGameViewModel) {
     val gridSize = 5 // 5x5 grid
 
-    // Background processing
+    // Background processing for finding all the possible words
+    // in the current grid
     LaunchedEffect(viewModel.letters.value) {
         withContext(Dispatchers.Default) {
             val words = dictionary.graphifyAndFindWords(viewModel.letters.value, gridSize)
@@ -24,6 +25,7 @@ fun WordGrid(dictionary: Dictionary, viewModel: WordGameViewModel) {
         }
     }
 
+    // Shuffle cooldown handler
     LaunchedEffect(viewModel.shuffleCooldown.value) {
         while (viewModel.shuffleCooldown.value && viewModel.cooldownTime.value > 0) {
             delay(1000)
