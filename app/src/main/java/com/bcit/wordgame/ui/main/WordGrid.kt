@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -21,8 +22,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.viewModelFactory
+import com.bcit.wordgame.WordGameViewModel
 import com.bcit.wordgame.dictionary.Dictionary
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import kotlin.random.Random
 
@@ -46,23 +50,67 @@ fun randomLetters(): MutableList<String> {
 
 
 @Composable
-fun WordGrid(dictionary: Dictionary) {
-    var points = remember { mutableStateOf(0) }
+fun WordGrid(dictionary: Dictionary, viewModel: WordGameViewModel) {
     val gridSize = 5 // 5x5 grid
     val letters = remember { mutableStateOf(randomLetters()) }
     var selectedLetters = remember { mutableStateListOf<Int>(12) }
     var currentWord by remember { mutableStateOf("${letters.value[12]}") }
     var currentIndex by remember { mutableStateOf(12) } // Start from the middle
+
     var possibleWords = remember { mutableStateOf(setOf<String>()) }
+    var foundWords = remember { mutableStateListOf<String>() }
+
+    var shuffleCooldown by remember { mutableStateOf(false) }
+    var cooldownTime by remember { mutableStateOf(0) }
 
     // Background processing
     LaunchedEffect(letters.value) {
         withContext(Dispatchers.Default) {
             val words = dictionary.graphifyAndFindWords(letters.value, gridSize)
             withContext(Dispatchers.Main) {
-                possibleWords.value = words
+                possibleWords.value = words.distinct().toSet()
             }
         }
+    }
+
+    fun shuffleLetters() {
+        if (!shuffleCooldown) {
+            letters.value = randomLetters()
+            selectedLetters.clear()
+            selectedLetters.add(12)
+            currentWord = "${letters.value[12]}"
+            currentIndex = 12
+
+            shuffleCooldown = true
+            cooldownTime = 5
+        }
+    }
+
+    fun checkWord() {
+        val validWord = dictionary.checkWord(currentWord)
+        if(validWord) {
+            if(!(foundWords.contains(currentWord))) {
+                viewModel.points.value += currentWord.length * 5
+                foundWords.add(currentWord)
+            }
+        } else {
+            viewModel.points.value -= 5
+        }
+    }
+
+    fun clearWord() {
+        selectedLetters.clear()
+        selectedLetters.add(12)
+        currentWord = "${letters.value[12]}"
+        currentIndex = 12
+    }
+
+    LaunchedEffect(shuffleCooldown) {
+        while (shuffleCooldown && cooldownTime > 0) {
+            delay(1000)
+            cooldownTime--
+        }
+        shuffleCooldown = false
     }
 
 
@@ -87,12 +135,12 @@ fun WordGrid(dictionary: Dictionary) {
             modifier = Modifier.padding(top = 20.dp)
         )
         Text(
-            text = "Points: ${points.value}",
+            text = "Points: ${viewModel.points.value}",
             fontSize = 24.sp,
             modifier = Modifier.padding(top = 20.dp)
         )
         Text(
-            text = "All possible words in this grid: ${possibleWords.value.size}",
+            text = "All possible words in this grid: ${possibleWords.value.size - foundWords.size}",
             fontSize = 24.sp,
             modifier = Modifier.padding(top = 20.dp)
         )
@@ -116,35 +164,12 @@ fun WordGrid(dictionary: Dictionary) {
             updateSelection = ::updateSelection
         )
 
-        // OK and Clear Buttons
-        Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
-            Button(onClick = {
-                val validWord = dictionary.checkWord(currentWord)
-                if(validWord) {
-                    points.value += currentWord.length * 5
-                } else {
-                    points.value -= 5
-                }
-            }) {
-                Text("Check Word")
-            }
-            Button(onClick = {
-                selectedLetters.clear()
-                selectedLetters.add(12)
-                currentWord = "${letters.value[12]}"
-                currentIndex = 12
-            }) {
-                Text("Clear")
-            }
-            Button(onClick = {
-                letters.value = randomLetters()
-                selectedLetters.clear()
-                selectedLetters.add(12)
-                currentWord = "${letters.value[12]}"
-                currentIndex = 12
-            }) {
-                Text("Shuffle")
-            }
-        }
+        ButtonGrid(
+            checkWord = {checkWord()},
+            clearWord = {clearWord()},
+            shuffleLetters = { shuffleLetters() },
+            shuffleCooldown = shuffleCooldown,
+            cooldownTime = cooldownTime
+        )
     }
 }

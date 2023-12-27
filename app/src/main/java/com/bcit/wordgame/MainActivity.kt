@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModelProvider
 import com.bcit.wordgame.dictionary.Dictionary
 import com.bcit.wordgame.ui.main.DirectionButton
 import com.bcit.wordgame.ui.main.LetterBox
@@ -29,8 +30,9 @@ class MainActivity : ComponentActivity() {
         setContent {
 
             val dictionary = Dictionary(this)
+            val viewModel = ViewModelProvider(this)[WordGameViewModel::class.java]
 
-            WordGrid(dictionary)
+            WordGrid(dictionary, viewModel)
         }
     }
 }
