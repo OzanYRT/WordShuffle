@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import com.bcit.wordgame.WordGameViewModel
 import com.bcit.wordgame.dictionary.Dictionary
 import kotlinx.coroutines.Dispatchers
@@ -11,7 +13,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 
 @Composable
-fun WordGrid(dictionary: Dictionary, viewModel: WordGameViewModel) {
+fun WordGrid(dictionary: Dictionary, viewModel: WordGameViewModel, nav: NavController) {
     val gridSize = 5 // 5x5 grid
 
     // Background processing for finding all the possible words
@@ -32,6 +34,14 @@ fun WordGrid(dictionary: Dictionary, viewModel: WordGameViewModel) {
             viewModel.cooldownTime.value--
         }
         viewModel.shuffleCooldown.value = false
+    }
+
+    LaunchedEffect(viewModel.gameTime.value) {
+        while(viewModel.gameTime.value > 0) {
+            delay(1000)
+            viewModel.gameTime.value--
+        }
+        nav.navigate("gameOver")
     }
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {

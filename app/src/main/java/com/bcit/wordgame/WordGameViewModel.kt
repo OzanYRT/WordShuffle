@@ -3,6 +3,7 @@ package com.bcit.wordgame
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.navigation.NavController
 import com.bcit.wordgame.dictionary.Dictionary
 import kotlin.random.Random
 
@@ -16,6 +17,7 @@ class WordGameViewModel() : ViewModel() {
     var cooldownTime = mutableStateOf(0)
     var possibleWords = mutableStateOf(setOf<String>())
     var foundWords = mutableStateListOf<String>()
+    var gameTime = mutableStateOf(300)
 
     fun randomLetters(): MutableList<String> {
         val letters = mutableListOf("B", "C", "D", "F", "G", "H", "J", "K", "L", "M", "N", "P", "Q", "R", "S", "T", "V", "W", "X", "Y", "Z")
@@ -79,6 +81,18 @@ class WordGameViewModel() : ViewModel() {
                 currentIndex.value = selectedLetters.last()
             }
         }
+    }
+
+    fun restartGame(navController: NavController) {
+        points.value = 0
+        gameTime.value = 30
+        letters.value = randomLetters()
+        currentWord.value = "${letters.value[12]}"
+        currentIndex.value = 12
+        selectedLetters.clear()
+        selectedLetters.add(12)
+        foundWords.clear()
+        navController.navigate("start")
     }
 
 }

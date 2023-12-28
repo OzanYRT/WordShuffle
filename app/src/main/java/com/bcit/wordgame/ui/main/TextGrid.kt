@@ -18,8 +18,11 @@ fun TextGrid(viewModel: WordGameViewModel) {
     )
     Text(
         text = "Points: ${viewModel.points.value}",
-        fontSize = 24.sp,
-        modifier = Modifier.padding(top = 20.dp)
+        fontSize = 24.sp
+    )
+    Text(
+        text = "Time left: ${viewModel.gameTime.value} seconds",
+        fontSize = 24.sp
     )
     Text(
         text = "All possible words in this grid: ${viewModel.possibleWords.value.size - viewModel.foundWords.size}",

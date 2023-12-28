@@ -10,7 +10,7 @@ import com.bcit.wordgame.dictionary.Dictionary
 
 enum class Screen(val route: String) {
     START("start"),
-    GAMEOVER("gameover")
+    GAMEOVER("gameOver")
 }
 
 @Composable
@@ -25,7 +25,14 @@ val navController = rememberNavController()
             composable(Screen.START.route) {
                 WordGrid(
                     dictionary = dictionary,
-                    viewModel = viewModel)
+                    viewModel = viewModel,
+                    nav = navController)
+            }
+            composable(Screen.GAMEOVER.route) {
+                GameOver(
+                    viewModel = viewModel,
+                    nav = navController
+                )
             }
         })
 
