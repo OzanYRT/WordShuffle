@@ -1,13 +1,16 @@
-package com.bcit.wordgame.ui.main
+package com.bcit.wordgame.pages
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.navigation.NavController
-import androidx.navigation.Navigation
 import com.bcit.wordgame.WordGameViewModel
 import com.bcit.wordgame.dictionary.Dictionary
+import com.bcit.wordgame.ui.main.ButtonGrid
+import com.bcit.wordgame.ui.main.DirectionGrid
+import com.bcit.wordgame.ui.main.LetterGrid
+import com.bcit.wordgame.ui.main.TextGrid
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext

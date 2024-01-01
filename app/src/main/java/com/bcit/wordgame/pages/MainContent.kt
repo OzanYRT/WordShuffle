@@ -1,6 +1,5 @@
-package com.bcit.wordgame.ui.main
+package com.bcit.wordgame.pages
 
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -9,6 +8,7 @@ import com.bcit.wordgame.WordGameViewModel
 import com.bcit.wordgame.dictionary.Dictionary
 
 enum class Screen(val route: String) {
+    MENU("menu"),
     START("start"),
     GAMEOVER("gameOver")
 }
@@ -20,8 +20,11 @@ val navController = rememberNavController()
 
     NavHost(
         navController = navController,
-        startDestination = Screen.START.route,
+        startDestination = Screen.MENU.route,
         builder = {
+            composable(Screen.MENU.route) {
+                MainMenu(nav = navController)
+            }
             composable(Screen.START.route) {
                 WordGrid(
                     dictionary = dictionary,

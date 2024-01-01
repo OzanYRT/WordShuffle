@@ -85,7 +85,7 @@ class WordGameViewModel() : ViewModel() {
 
     fun restartGame(navController: NavController) {
         points.value = 0
-        gameTime.value = 30
+        gameTime.value = 300
         letters.value = randomLetters()
         currentWord.value = "${letters.value[12]}"
         currentIndex.value = 12
