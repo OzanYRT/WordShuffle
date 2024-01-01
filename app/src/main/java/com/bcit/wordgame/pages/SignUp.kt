@@ -69,7 +69,7 @@ fun UserItem(
             .fillMaxWidth()
             .padding(12.dp)
             .height(80.dp)
-            .background(Color(0xFFFFFFFF)),
+            .background(Color(0xFFD33535)),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(text = user.name ?: "", color = Color.Black, fontSize = 20.sp)
