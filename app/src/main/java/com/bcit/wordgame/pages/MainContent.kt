@@ -11,7 +11,8 @@ import com.bcit.wordgame.ui.main.UsersState
 enum class Screen(val route: String) {
     MENU("menu"),
     START("start"),
-    GAMEOVER("gameOver")
+    GAMEOVER("gameOver"),
+    SIGNUP("signup")
 }
 
 @Composable
@@ -21,7 +22,7 @@ val navController = rememberNavController()
 
     NavHost(
         navController = navController,
-        startDestination = Screen.MENU.route,
+        startDestination = Screen.SIGNUP.route,
         builder = {
             composable(Screen.MENU.route) {
                 MainMenu(nav = navController)
@@ -37,6 +38,9 @@ val navController = rememberNavController()
                     viewModel = viewModel,
                     nav = navController
                 )
+            }
+            composable(Screen.SIGNUP.route) {
+                SignUp(usersState = usersState)
             }
         })
 
