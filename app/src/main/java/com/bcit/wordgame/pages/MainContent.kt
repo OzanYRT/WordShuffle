@@ -6,6 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.bcit.wordgame.WordGameViewModel
 import com.bcit.wordgame.dictionary.Dictionary
+import com.bcit.wordgame.ui.main.UsersState
 
 enum class Screen(val route: String) {
     MENU("menu"),
@@ -14,7 +15,7 @@ enum class Screen(val route: String) {
 }
 
 @Composable
-fun MainContent(dictionary: Dictionary, viewModel: WordGameViewModel) {
+fun MainContent(usersState: UsersState, dictionary: Dictionary, viewModel: WordGameViewModel) {
 
 val navController = rememberNavController()
 
