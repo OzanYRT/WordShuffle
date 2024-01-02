@@ -12,7 +12,8 @@ enum class Screen(val route: String) {
     MENU("menu"),
     START("start"),
     GAMEOVER("gameOver"),
-    SIGNUP("signup")
+    SIGNUP("signup"),
+    LEADERBOARD("leaderboard")
 }
 
 @Composable
@@ -40,7 +41,10 @@ val navController = rememberNavController()
                 )
             }
             composable(Screen.SIGNUP.route) {
-                SignUp(usersState = usersState)
+                SignUp(usersState = usersState, nav = navController)
+            }
+            composable(Screen.LEADERBOARD.route) {
+                LeaderBoard(usersState = usersState)
             }
         })
 

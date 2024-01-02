@@ -22,5 +22,8 @@ fun MainMenu(nav: NavController) {
             Button(onClick = { nav.navigate("start") }) {
                 Text(text = "Start Game")
             }
+            Button(onClick = { nav.navigate("leaderboard") }) {
+                Text(text = "Leader Board")
+            }
         }
 }

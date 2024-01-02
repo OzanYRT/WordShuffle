@@ -18,13 +18,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.bcit.wordgame.data.LocalUser
 import com.bcit.wordgame.ui.main.CustomTextField
 import com.bcit.wordgame.ui.main.SignupState
 import com.bcit.wordgame.ui.main.UsersState
 
 @Composable
-fun SignUp(usersState: UsersState) {
+fun SignUp(usersState: UsersState, nav: NavController) {
+    var errorInValidation = false
     val signupState = remember { SignupState() }
     Column {
         Column {
@@ -45,33 +47,26 @@ fun SignUp(usersState: UsersState) {
                     password = signupState.password,
                     highscore = signupState.highScore
                 )
-                usersState.insertEntity(user)
+                if (usersState.checkUser(user)) {
+                    errorInValidation = false
+                    nav.navigate("menu")
+                } else {
+                    if(usersState.checkDuplicate(user)) {
+                        usersState.insertEntity(user)
+                        errorInValidation = false
+                        nav.navigate("menu")
+                    } else {
+                        errorInValidation = true
+                    }
+
+                }
+
             }) {
                 Text(text = "Sign in", fontSize = 30.sp)
-            }
-            LazyColumn {
-                items(usersState.users.toMutableStateList().size) {index ->
-                    UserItem(
-                        user = usersState.users[index]
-                    )
+                if(errorInValidation) {
+                    Text(text = "There was an error in validation", color = Color(0xFFDA1111))
                 }
             }
         }
-    }
-}
-
-@Composable
-fun UserItem(
-    user: LocalUser
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(12.dp)
-            .height(80.dp)
-            .background(Color(0xFFD33535)),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Text(text = user.name ?: "", color = Color.Black, fontSize = 20.sp)
     }
 }

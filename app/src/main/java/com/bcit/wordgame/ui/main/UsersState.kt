@@ -24,4 +24,20 @@ class UsersState(private val usersRepository: UsersRepository) {
         users.remove(user)
         usersRepository.delete(user)
     }
+
+    fun checkUser(user: LocalUser): Boolean {
+        return usersRepository.checkUser(user)
+    }
+
+    fun getTop10(): List<LocalUser> {
+        return usersRepository.getTop10()
+    }
+
+    fun deleteAll() {
+        usersRepository.deleteAll()
+    }
+
+    fun checkDuplicate(user: LocalUser): Boolean {
+        return usersRepository.checkDuplicate(user)
+    }
 }
