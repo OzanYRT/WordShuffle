@@ -40,4 +40,8 @@ class UsersState(private val usersRepository: UsersRepository) {
     fun checkDuplicate(user: LocalUser): Boolean {
         return usersRepository.checkDuplicate(user)
     }
+
+    fun updateHighScore(userName: String, newHighScore: Int) {
+        usersRepository.updateHighScore(userName, newHighScore)
+    }
 }

@@ -1,5 +1,6 @@
 package com.bcit.wordgame.pages
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,6 +17,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -26,6 +28,9 @@ import com.bcit.wordgame.ui.main.UsersState
 
 @Composable
 fun SignUp(usersState: UsersState, nav: NavController) {
+    val context = LocalContext.current
+    val sharedPreferences = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE)
+
     var errorInValidation = false
     val signupState = remember { SignupState() }
     Column {
@@ -49,11 +54,19 @@ fun SignUp(usersState: UsersState, nav: NavController) {
                 )
                 if (usersState.checkUser(user)) {
                     errorInValidation = false
+                    sharedPreferences.edit().putBoolean("isLoggedIn", true).apply()
+                    sharedPreferences.edit().putString("name", user.name).apply()
+                    sharedPreferences.edit().putString("email", user.email).apply()
+                    user.highscore?.let { sharedPreferences.edit().putInt("highScore", it).apply() }
                     nav.navigate("menu")
                 } else {
                     if(usersState.checkDuplicate(user)) {
                         usersState.insertEntity(user)
                         errorInValidation = false
+                        sharedPreferences.edit().putBoolean("isLoggedIn", true).apply()
+                        sharedPreferences.edit().putString("name", user.name).apply()
+                        sharedPreferences.edit().putString("email", user.email).apply()
+                        user.highscore?.let { sharedPreferences.edit().putInt("highScore", it).apply() }
                         nav.navigate("menu")
                     } else {
                         errorInValidation = true

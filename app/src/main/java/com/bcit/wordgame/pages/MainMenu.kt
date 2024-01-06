@@ -1,5 +1,6 @@
 package com.bcit.wordgame.pages
 
+import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,10 +10,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 
 @Composable
 fun MainMenu(nav: NavController) {
+    val context = LocalContext.current
+    val sharedPreferences = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE)
+
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -24,6 +29,12 @@ fun MainMenu(nav: NavController) {
             }
             Button(onClick = { nav.navigate("leaderboard") }) {
                 Text(text = "Leader Board")
+            }
+            Button(onClick = {
+                sharedPreferences.edit().clear().apply()
+                nav.navigate("signup")
+            }) {
+                Text(text = "Logout")
             }
         }
 }

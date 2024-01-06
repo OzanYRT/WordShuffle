@@ -1,9 +1,11 @@
 package com.bcit.wordgame.pages
 
+import android.content.Context
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import com.bcit.wordgame.WordGameViewModel
 import com.bcit.wordgame.dictionary.Dictionary
@@ -11,12 +13,16 @@ import com.bcit.wordgame.ui.main.ButtonGrid
 import com.bcit.wordgame.ui.main.DirectionGrid
 import com.bcit.wordgame.ui.main.LetterGrid
 import com.bcit.wordgame.ui.main.TextGrid
+import com.bcit.wordgame.ui.main.UsersState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 
 @Composable
-fun WordGrid(dictionary: Dictionary, viewModel: WordGameViewModel, nav: NavController) {
+fun WordGrid(dictionary: Dictionary, viewModel: WordGameViewModel, nav: NavController, usersState: UsersState) {
+    val context = LocalContext.current
+    val sharedPreferences = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE)
+
     val gridSize = 5 // 5x5 grid
 
     // Background processing for finding all the possible words
@@ -43,6 +49,12 @@ fun WordGrid(dictionary: Dictionary, viewModel: WordGameViewModel, nav: NavContr
         while(viewModel.gameTime.value > 0) {
             delay(1000)
             viewModel.gameTime.value--
+        }
+        val currentHighScore = sharedPreferences.getInt("highScore", 0)
+        if(viewModel.points.value > currentHighScore) {
+            sharedPreferences.edit().putInt("highScore", viewModel.points.value).apply()
+            sharedPreferences.getString("name", "")
+                ?.let { usersState.updateHighScore(it, sharedPreferences.getInt("highScore", 0)) }
         }
         nav.navigate("gameOver")
     }

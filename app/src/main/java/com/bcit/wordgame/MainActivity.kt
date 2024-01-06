@@ -13,6 +13,12 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val sharedPreferences = getSharedPreferences("MyAppPrefs", MODE_PRIVATE)
+        val isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false)
+        val name = sharedPreferences.getString("name", "")
+        val email = sharedPreferences.getString("email", "")
+        val highScore = sharedPreferences.getInt("highscore", 0)
+
         val usersRepository = (application as MyApp).usersRepository
 
         setContent {
@@ -24,7 +30,7 @@ class MainActivity : ComponentActivity() {
                 UsersState(usersRepository)
             }
 
-            MainContent(usersState, dictionary, viewModel)
+            MainContent(usersState, dictionary, viewModel, isLoggedIn, highScore)
         }
     }
 }

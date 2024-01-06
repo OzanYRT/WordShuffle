@@ -47,4 +47,8 @@ class UsersRepository(private val userDao: UserDao) {
         return true
     }
 
+    fun updateHighScore(userName: String, newHighScore: Int) {
+        userDao.updateHighScore(userName, newHighScore)
+    }
+
 }

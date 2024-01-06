@@ -16,4 +16,7 @@ interface UserDao {
 
     @Delete
     fun delete(user: LocalUser)
+
+    @Query("UPDATE users_table SET high_score = :newHighScore WHERE first_name = :userName")
+    fun updateHighScore(userName: String, newHighScore: Int)
 }

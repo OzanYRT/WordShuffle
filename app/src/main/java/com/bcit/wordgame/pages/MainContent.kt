@@ -17,13 +17,13 @@ enum class Screen(val route: String) {
 }
 
 @Composable
-fun MainContent(usersState: UsersState, dictionary: Dictionary, viewModel: WordGameViewModel) {
+fun MainContent(usersState: UsersState, dictionary: Dictionary, viewModel: WordGameViewModel, isLoggedIn: Boolean, highScore: Int) {
 
 val navController = rememberNavController()
 
     NavHost(
         navController = navController,
-        startDestination = Screen.SIGNUP.route,
+        startDestination = if (isLoggedIn) Screen.MENU.route else Screen.SIGNUP.route,
         builder = {
             composable(Screen.MENU.route) {
                 MainMenu(nav = navController)
@@ -32,7 +32,9 @@ val navController = rememberNavController()
                 WordGrid(
                     dictionary = dictionary,
                     viewModel = viewModel,
-                    nav = navController)
+                    nav = navController,
+                    usersState = usersState
+                )
             }
             composable(Screen.GAMEOVER.route) {
                 GameOver(
